@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Benchmark.js test page</title>
+<!-- http://jsperf.com/benchmark-js-test-page -->
+<meta charset="utf-8">
+<link rel="stylesheet" href="benchmark_runner/main.css">
+<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<script src="Benchmarkjs/benchmark.js"></script>
+<script src="benchmark_runner/ui.js"></script>
+<script src="Benchmarkjs/plugins/ui.browserscope.js"></script>
+
+<!-- Borrowing Jasmine just for the SpecLoader stuff -->
+<script src="Jasmine/jasmine.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="Helpers/jasmine-html.js"></script>
+<script type="text/javascript" charset="utf-8" src="Helpers/Syn.js"></script>
+<script type="text/javascript" charset="utf-8" src="Helpers/simulateEvent.js"></script>
+<script type="text/javascript" charset="utf-8" src="Helpers/JSSpecToJasmine.js"></script>
+<script type="text/javascript" charset="utf-8" src="Helpers/Loader.js"></script>
+
+<!-- Benchmark config -->
+
+<script type="text/javascript" charset="utf-8" src="../BenchMarks.js"></script>
+
+
+</head>
+<body>
+<article>
+	<hgroup>
+		<h1 id="h1Title">Benchmark.js test page</h1>
+	</hgroup>
+
+	<section id="runner">
+		<p id="firebug"><strong>Warning! For accurate results, please disable Firebug before running the tests. <a href="http://jsperf.com/faq#firebug">(Why?)</a></strong></p>
+
+		<p id="status">
+			<noscript>
+				<strong>
+					To run the tests, please
+					<a href="http://enable-javascript.com/">enable JavaScript</a>
+					and reload the page.
+				</strong>
+			</noscript>
+		</p>
+
+		<div id="controls">
+			<button id="run" type="button"></button>
+		</div>
+
+		<table id="test-table">
+			<caption>Testing in <span id="user-agent"></span></caption>
+			<thead>
+			<tr>
+				<th>Test</th>
+				<th title="Operations per second (higher is better)">Ops/sec</th>
+			</tr>
+			</thead>
+			<tbody id="testlist">
+			</tbody>
+		</table>
+	</section>
+
+</article>
+
+<footer>
+	based on examples provided by <a href="http://jsperf.com/">jsPerf.com</a>
+	&bull; <a href="http://github.com/mathiasbynens/benchmark.js">fork <code>benchmark.js</code> on github</a>
+</footer>
+
+<applet code="nano" archive="Benchmarkjs/nano.jar"></applet>
+
+<script type="text/javascript" charset="utf-8">
+
+var SetNames = [],
+	SourceNames = [];
+
+(function(){
+
+// Load all the specs
+var loader = SpecLoader(Configuration, jasmine.parseQueryString(document.location.search.substr(1)));
+var load = function(object, base){
+	for (var j = 0; j < object.length; j++)
+		document.write('<scr'+'ipt src="../' + (base || '') + object[j] + '.js" type="text/javascript"><\/script>');
+};
+
+loader.setSourceLoader(load);
+loader.run();
+
+loader.setSpecLoader(load);
+loader.run();
+
+SetNames = loader.getSetNames();
+SourceNames = loader.getSourceNames();
+
+document.title = 'Benchmarks for ' + Configuration.name;
+document.getElementById('h1Title').innerHTML = 'Benchmarks for ' + Configuration.name;
+})();
+</script>
+</body>
+</html>

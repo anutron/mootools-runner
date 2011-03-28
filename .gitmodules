@@ -10,3 +10,6 @@
 [submodule "Helpers/Sinon.JS"]
 	path = Helpers/Sinon.JS
 	url = git://github.com/ibolmo/Sinon.JS.git
+[submodule "Benchmarkjs"]
+	path = Benchmarkjs
+	url = https://github.com/mathiasbynens/Benchmark.js
