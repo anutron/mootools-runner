@@ -5,6 +5,11 @@
 <!-- http://jsperf.com/benchmark-js-test-page -->
 <meta charset="utf-8">
 <link rel="stylesheet" href="benchmark_runner/main.css">
+
+<script src="benchmark_runner/raphael.js"></script>
+<script src="benchmark_runner/g.raphael.js"></script>
+<script src="benchmark_runner/g.raphael-bar.js"></script>
+
 <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 <script src="Benchmarkjs/benchmark.js"></script>
 <script src="benchmark_runner/ui.js"></script>
@@ -27,7 +32,13 @@
 <body>
 <article>
 	<hgroup>
-		<h1 id="h1Title">Benchmark.js test page</h1>
+		<span style="float: right; position: relative; top: 18px; font-size: 9px;">
+			<a href="#controls">Tests</a> |
+			<a href="#chart">Charted results</a>
+		</span>
+		<h1 id="h1Title">
+			Benchmark.js test page
+		</h1>
 	</hgroup>
 
 	<section id="runner">
@@ -62,6 +73,11 @@
 
 </article>
 
+<h3 style="font-size: 14px">Charted results 
+<i style="font-size: 9px; color: #999;">(Run tests first to get charted output.)</i>
+</h3>
+<div id="chart"></div>
+
 <footer>
 	based on examples provided by <a href="http://jsperf.com/">jsPerf.com</a>
 	&bull; <a href="http://github.com/mathiasbynens/benchmark.js">fork <code>benchmark.js</code> on github</a>
@@ -94,6 +110,74 @@ SourceNames = loader.getSourceNames();
 
 document.title = 'Benchmarks for ' + Configuration.name;
 document.getElementById('h1Title').innerHTML = 'Benchmarks for ' + Configuration.name;
+
+var chartIt = function(names, vals) {
+	var w = 400;
+	var h = vals.length * 30;
+	var r = Raphael("chart", w + 100, h + 40),
+			fin = function () {
+					this.flag = r.g.popup(this.bar.x, this.bar.y, (this.bar.value || "0") + ' ms').insertBefore(this);
+			},
+			fout = function () {
+					this.flag.animate({opacity: 0}, 300, function () {this.remove();});
+			};
+	r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
+
+	r.g.text(160, 10, "Benchmarks (in ms - longer is slower)");
+
+	var colors = ['#1f77b4',
+	'#aec7e8',
+	'#ff7f0e',
+	'#ffbb78',
+	'#2ca02c',
+	'#98df8a',
+	'#d62728',
+	'#ff9896',
+	'#9467bd',
+	'#c5b0d5',
+	'#8c564b',
+	'#c49c94',
+	'#e377c2',
+	'#f7b6d2',
+	'#7f4f7f',
+	'#c7c7c7',
+	'#bcbd22',
+	'#dbdb8d',
+	'#17becf',
+	'#9edae5'];
+
+	for (var i = 0; i < vals.length; i++) {
+		if (!colors[i]) colors[i] = colors[i%20];
+	}
+	r.g.hbarchart(10, 20, w, h, vals, {
+		type: 'square',
+		colors: colors
+	}).hover(fin, fout).label(names);
+};
+
+ui.on('complete', function(benchmarks){
+	var values = [];
+	for (var i = 0; i < ui.benchmarks.length; i++) {
+		var ms = (ui.benchmarks[i].stats.mean * 1000);
+		var precision = Math.pow(10, 2);
+		var ms = Math.round(ms * precision) / precision;
+    
+		values.push({
+			name: ui.benchmarks[i].name,
+			ms: ms
+		});
+	};
+	values = values.sort(function(a, b){
+		return a.ms < b.ms;
+	});
+	var names = [], vals = [];
+	for (var v = 0; v < values.length; v++){
+		names.push(values[v].name);
+		vals.push(values[v].ms);
+	}
+	chartIt(names, vals);
+});
+
 })();
 </script>
 </body>
