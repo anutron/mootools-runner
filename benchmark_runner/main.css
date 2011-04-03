@@ -510,3 +510,6 @@ h1#h1Title {
 #firebug {
 	font-size: 11px;
 }
+.checkTd {
+	text-align: center;
+}

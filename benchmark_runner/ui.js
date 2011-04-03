@@ -263,7 +263,10 @@
     if (run) {
       logError(false);
       ui.length = 0;
-      ui.push.apply(ui, filter(ui.benchmarks, function(bench) { return !bench.error; }));
+      ui.push.apply(ui, filter(ui.benchmarks, function(bench, index) {
+       var check = $('run_' + (index + 1));
+       return !bench.error && check.checked;
+      }));
       ui.run(true, true);
     }
   }
@@ -348,11 +351,15 @@
     var id = ui.benchmarks.length + 1,
         tr = document.createElement('tr'),
         th = document.createElement('th'),
+        checkTd = document.createElement('td'),
         td = document.createElement('td');
     th.scope = 'row';
     th.id = 'title-' + id;
     th.innerHTML = bench.name;
     tr.appendChild(th);
+    checkTd.className = "checkTd";
+    checkTd.innerHTML = '<input type="checkbox" checked="true" id="run_' + id + '" name="run_' + id + '"/>'
+    tr.appendChild(checkTd);
     td.id = 'results-' + id;
     td.className = "results";
     tr.appendChild(td);
@@ -439,6 +446,8 @@
 
   // expose
   window.MooBench = window.ui = ui;
+
+  ui.addListener = addListener;
 
   // don't let users alert, confirm, prompt, or open new windows
   window.alert = window.confirm = window.prompt = window.open = Benchmark.noop;

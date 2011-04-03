@@ -9,6 +9,7 @@
 <script src="benchmark_runner/raphael.js"></script>
 <script src="benchmark_runner/g.raphael.js"></script>
 <script src="benchmark_runner/g.raphael-bar.js"></script>
+<script src="benchmark_runner/multi-select-checkboxes.js" type="text/javascript" charset="utf-8"></script>
 
 <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 <script src="Benchmarkjs/benchmark.js"></script>
@@ -32,10 +33,6 @@
 <body>
 <article>
 	<hgroup>
-		<span style="float: right; position: relative; top: 18px; font-size: 9px;">
-			<a href="#controls">Tests</a> |
-			<a href="#chart">Charted results</a>
-		</span>
 		<h1 id="h1Title">
 			Benchmark.js test page
 		</h1>
@@ -58,17 +55,20 @@
 			<button id="run" type="button"></button>
 		</div>
 
-		<table id="test-table">
-			<caption>Testing in <span id="user-agent"></span></caption>
-			<thead>
-			<tr>
-				<th>Test</th>
-				<th title="Operations per second (higher is better)">Ops/sec</th>
-			</tr>
-			</thead>
-			<tbody id="testlist">
-			</tbody>
-		</table>
+		<div style="overflow:auto; max-height: 400px;">
+			<table id="test-table">
+				<caption>Testing in <span id="user-agent"></span></caption>
+				<thead>
+				<tr>
+					<th>Test</th>
+					<th>Run <input type="checkbox" checked="true" id="checkAll"></th>
+					<th title="Operations per second (higher is better)">Ops/sec</th>
+				</tr>
+				</thead>
+				<tbody id="testlist">
+				</tbody>
+			</table>
+		</div>
 	</section>
 
 </article>
@@ -110,6 +110,13 @@ SourceNames = loader.getSourceNames();
 
 document.title = 'Benchmarks for ' + Configuration.name;
 document.getElementById('h1Title').innerHTML = 'Benchmarks for ' + Configuration.name;
+
+ui.addListener(document.getElementById('checkAll'), 'click', function(){
+	var checkAll = this.checked;
+	Benchmark.each(document.getElementsByTagName('input'), function(input){
+		input.checked = checkAll;
+	});
+});
 
 var chartIt = function(names, vals) {
 	var w = 400;
@@ -161,19 +168,20 @@ ui.on('complete', function(benchmarks){
 		var ms = (ui.benchmarks[i].stats.mean * 1000);
 		var precision = Math.pow(10, 2);
 		var ms = Math.round(ms * precision) / precision;
-    
-		values.push({
-			name: ui.benchmarks[i].name,
-			ms: ms
-		});
+		if (ui.benchmarks[i].count > 0) {
+			values.push({
+				name: ui.benchmarks[i].name,
+				ms: ms
+			});
+		}
 	};
-	values = values.sort(function(a, b){
+	sorted = values.sort(function(a, b){
 		return a.ms < b.ms;
 	});
 	var names = [], vals = [];
-	for (var v = 0; v < values.length; v++){
-		names.push(values[v].name);
-		vals.push(values[v].ms);
+	for (var v = 0; v < sorted.length; v++){
+		names.push(sorted[v].name);
+		vals.push(sorted[v].ms);
 	}
 	chartIt(names, vals);
 });
