@@ -495,6 +495,9 @@ footer {
 /*
 	MooTools customizations
 */
+#test-table {
+	margin: 0;
+}
 #test-table tbody th {
 	text-align: left;
 }
@@ -512,4 +515,9 @@ h1#h1Title {
 }
 .checkTd {
 	text-align: center;
+}
+#test-table-wrapper {
+	overflow:auto;
+	max-height: 400px;
+	border: 1px solid #ccc;
 }
