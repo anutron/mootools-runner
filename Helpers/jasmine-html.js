@@ -12,10 +12,10 @@ jasmine.toQueryString = function(object, base){
 			result = jasmine.toQueryString(qs, key);
 		} else if (typeof value == 'object'){
 			result = jasmine.toQueryString(value, key);
-		} else {
+		} else if (key !== "") {
 			result = key + '=' + encodeURIComponent(value);
 		}
-		
+	
 		if (value != undefined) queryString.push(result);
 	})(object[i], i);
 
@@ -84,7 +84,6 @@ jasmine.TrivialReporter.prototype.createDom = function(type, attrs, childrenVarA
 
 jasmine.TrivialReporter.prototype.reportRunnerStarting = function(runner) {
   var showPassed, showSkipped;
-
   var query = jasmine.parseQueryString(document.location.search.substr(1));
   delete query.spec;
   
@@ -101,7 +100,6 @@ jasmine.TrivialReporter.prototype.reportRunnerStarting = function(runner) {
             this.createDom('label', {"for": "__jasmine_TrivialReporter_showSkipped__"}, " skipped")
             )
           ),
-
 	  this.runnerDiv = this.createDom('div', {className: 'runner running'},
           this.createDom('a', {className: 'run_spec', href: '?' + jasmine.toQueryString(query)}, "run all"),
           this.runnerMessageSpan = this.createDom('span', {}, "Running..."),
