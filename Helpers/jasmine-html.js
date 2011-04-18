@@ -36,12 +36,15 @@ jasmine.parseQueryString = function(string){
 
 		for(var j = 0; j < keys.length; j++) (function(key, i){
 			var current = object[key];
-			if(i < keys.length - 1)
+			if(i < keys.length - 1) {
 				object = object[key] = current || {};
-			else if(current != null && typeof current.length == 'number')
+			} else if(current != null && typeof current.length == 'number') {
+				if (!jasmine.isArray_(current)) current = [current];
 				current.push(value);
-			else
+				object[key] = current;
+			} else {
 				object[key] = current != null ? [current, value] : value;
+			}
 		})(keys[j], j);
 
 	})(vars[i]);
